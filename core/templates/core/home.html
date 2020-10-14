@@ -1,3 +1,42 @@
 {% load static %}
-<link rel="stylesheet" type="text/css" href="{% static 'core/css/style.css' %}" />
-<h1> Home </h1>
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="{% static 'core/css/style.css' %}" />
+    <script type="text/javascript" src="{% static 'core/js/vue.js' %}"></script>
+    <title>REVO</title>
+</head>
+<body>
+<nav>
+    <a class="active_link" href="{% url 'home' %}">home</a>
+    <a href="{% url 'secret' %}">secret</a>
+</nav>
+</body>
+    <div id="app">
+        <h2>Home, sweet home</h2>
+        <h3>In Paris or Rome, I just wanna go home</h3>
+    </div>
+</body>
+<script type="text/javascript">
+var app = new Vue({
+    delimiters: ['[[', ']]'],
+    el: '#app',
+    data: {
+        v0: '',
+        v1: ''
+    },
+    methods: {
+        update() {
+            this.v1 = this.v0;
+        }
+    }
+})
+</script>
+<style type="text/css">
+#input-box {
+    width: 300px;
+    height: 300px;
+    resize: none;
+}
+</style>
+</html>
