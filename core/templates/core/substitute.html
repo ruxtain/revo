@@ -1,0 +1,104 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="{% static 'core/css/style.css' %}" />
+    <script type="text/javascript" src="{% static 'core/js/vue.js' %}"></script>
+    <title>REVO</title>
+</head>
+<body>
+<nav>
+    <a class="active_link" href="{% url 'home' %}">home</a>
+    <a href="{% url 'substitute' %}">substitute</a>
+</nav>
+</body>
+    <div id="app">
+        <div class="right">
+            <p class="date_input">
+                <span>数据时间:  [[ v_day_str ]]</span>
+                <button @click="date_add">加一天</button>
+                <button @click="date_sub">减一天</button>
+            </p>
+            <textarea v-model="raw" @input="sub"></textarea>
+        </div>
+        <div class="left">[[ res ]]</div>
+    </div>
+</body>
+<script type="text/javascript">
+
+function zfill(n) {
+    if (n < 10) {
+        return '0' + String(n)
+    } else {
+        return String(n)
+    }
+}
+
+function date_str(date) {
+    return [
+        date.getFullYear(), 
+        zfill((date.getMonth() + 1)),
+        zfill(date.getDate())
+    ].join('')
+}
+
+function date_add(date, days) { // days 可以为负数
+    date = date.setDate(date.getDate() + days);
+    return new Date(date);
+}
+
+var app = new Vue({
+    delimiters: ['[[', ']]'],
+    el: '#app',
+    data: {
+        raw: '',
+        res: '',
+        v_day: date_add(new Date(), -1), // 默认值
+    },
+    computed: { // 有点像 django filter，是动态的，不是一次性计算的
+        v_day_str: function() {
+            return date_str(this.v_day)
+        },
+        date_dict: function() {
+            var date_dict = {};
+            for (var i=0; i<=100; i++) {
+                if (i == 0) {
+                    key = '${v_day}'
+                } else if (i == 1) {
+                    key = '${v_last_day}'
+                } else {
+                    key = '${v_last_' + i + '_day}'
+                }
+                date_dict[key] = date_str(date_add(this.v_day, -i))
+            }
+            return date_dict
+        }
+    },
+    methods: {
+        sub() {
+            this.res = this.raw.replace('v_day', '123')
+        },
+        date_add() {
+            this.v_day = date_add(this.v_day, 1)
+        },
+        date_sub() {
+            this.v_day = date_add(this.v_day, -1)
+        }
+    }
+})
+</script>
+<style type="text/css">
+#app {
+    font-size: 16px;
+}
+p.date_input {
+    margin-right: 16px;
+    font-family: courier;
+}
+.right{width:50%; float:left; height:100%; }
+textarea {
+    width: 500px;
+    height: 780px;
+}
+</style>
+</html>
